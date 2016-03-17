@@ -67,7 +67,7 @@ func (g *Game) Run() {
 		} else if in == "eval" || in == "e" {
 			fmt.Printf("Score: %d\n", Evaluate(g.board))
 
-		} else if in == "auto" {
+		} else if in == "auto" || in == "a" {
 			for g.board.status == statusNormal {
 				g.board.MakeMove(Search(g.board))
 				fmt.Printf("%s\n", g.board.String())
