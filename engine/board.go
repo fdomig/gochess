@@ -250,10 +250,20 @@ func (b *Board) String() string {
 	files := "   a  b  c  d  e  f  g  h"
 	str := fmt.Sprintf("%s\n", files)
 
+	lastMoveSquare := Invalid
+
+	if len(b.history) > 0 {
+		lastMoveSquare = b.history[len(b.history)-1].move.To
+	}
+
 	for rank := int8(7); rank >= 0; rank-- {
 		var s = fmt.Sprintf("%d  ", rank+1)
 		for file := int8(0); file < 8; file++ {
-			s += fmt.Sprintf("%s  ", symbol(b.data[square(rank, file)]))
+			moved := " "
+			if square(rank, file) == int8(lastMoveSquare) {
+				moved = "*"
+			}
+			s += fmt.Sprintf("%s%s ", symbol(b.data[square(rank, file)]), moved)
 		}
 		if rank == 4 {
 			color := "white"
@@ -261,6 +271,31 @@ func (b *Board) String() string {
 				color = "black"
 			}
 			s += fmt.Sprintf("\t(%d) %s's move", b.fullMoves, color)
+		}
+		if rank == 3 {
+			c := ""
+			if b.whiteCastle&castleShort != 0 {
+				c += "K"
+			}
+			if b.whiteCastle&castleLong != 0 {
+				c += "Q"
+			}
+			if b.blackCastle&castleShort != 0 {
+				c += "k"
+			}
+			if b.blackCastle&castleLong != 0 {
+				c += "q"
+			}
+			if len(c) == 0 {
+				c = "-"
+			}
+			s += fmt.Sprintf("\tCasteling: %s", c)
+		}
+		if rank == 2 {
+			gen := NewGenerator(b)
+			if gen.CheckSimple() {
+				s += fmt.Sprintf("\tCheck!")
+			}
 		}
 		str += fmt.Sprintf("%s\n", s)
 	}

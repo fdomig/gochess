@@ -1,5 +1,7 @@
 package engine
 
+import "fmt"
+
 var (
 	nextRank int8 = 16
 	nextFile int8 = 1
@@ -55,6 +57,7 @@ type Generator struct {
 	board                  *Board
 	legalEnding            []bool
 	legalDelta             []int8
+	lastMoveSquare         Square
 	moves                  []Move
 	kingSquare             int8
 	kingUnderCheck         bool
@@ -186,9 +189,14 @@ func (g *Generator) reset() {
 
 	g.legalEnding = make([]bool, boardSize)
 	g.legalDelta = make([]int8, boardSize)
+
+	if len(g.board.history) > 0 {
+		g.lastMoveSquare = g.board.history[len(g.board.history)-1].move.To
+	}
 }
 
 func (g *Generator) sortMoves() {
+	lastCapture := make([]Move, 0, len(g.moves))
 	sorted := make([]Move, 0, len(g.moves))
 	captured := make([]Move, 0, len(g.moves))
 	promotions := make([]Move, 0, len(g.moves))
@@ -197,6 +205,8 @@ func (g *Generator) sortMoves() {
 
 	for _, move := range g.moves {
 		switch {
+		case move.To == g.lastMoveSquare:
+			lastCapture = append(lastCapture, move)
 		case move.Content != Empty:
 			captured = append(captured, move)
 		case move.Special == movePromotion:
@@ -208,7 +218,8 @@ func (g *Generator) sortMoves() {
 		}
 	}
 
-	// TODO 1. last moved piece capture
+	// 1. last moved piece capture
+	sorted = append(sorted, lastCapture...)
 
 	// 2. capture moves
 	sorted = append(sorted, captured...)
@@ -223,6 +234,7 @@ func (g *Generator) sortMoves() {
 	sorted = append(sorted, ordinary...)
 
 	if len(sorted) != len(g.moves) {
+		fmt.Printf("len(g.moves): %d, len(sorted): %d\n", len(g.moves), len(sorted))
 		panic("Sorted moves are missing moves!")
 	}
 
