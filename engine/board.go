@@ -59,8 +59,11 @@ func (b *Board) legalSquare(square int8) bool {
 func (b *Board) MakeMove(m Move) {
 
 	historyItem := HistoryItem{
-		move: m, whiteCastle: b.whiteCastle,
-		blackCastle: b.blackCastle, enPassant: b.enPassant, halfMoveClock: b.halfMoveClock,
+		move:          m,
+		whiteCastle:   b.whiteCastle,
+		blackCastle:   b.blackCastle,
+		enPassant:     b.enPassant,
+		halfMoveClock: b.halfMoveClock,
 	}
 
 	b.halfMoveClock++
@@ -139,7 +142,7 @@ func (b *Board) MakeMove(m Move) {
 		b.data[m.From] = Empty
 		// rook
 		rookPos := int8(m.From) - castleLongDistanceRook*nextFile
-		b.data[int8(m.From)+nextFile] = b.data[rookPos]
+		b.data[int8(m.From)-nextFile] = b.data[rookPos]
 		b.data[rookPos] = Empty
 		if m.MovedPiece == WhiteKing {
 			b.whiteCastle = castleNone

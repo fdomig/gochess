@@ -9,9 +9,9 @@ import (
 
 const (
 	defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
-//defaultFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -"
-// defaultFEN = "k7/8/K7/8/7p/7P/8/8 w - - 0 1" // only kings
+	// defaultFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -"
+	// defaultFEN = "k7/8/K7/8/7p/7P/8/8 w - - 0 1" // only kings
+	// defaultFEN = "r1bqkb1r/ppp1pppp/1nnp4/4P3/2P5/2N2N2/PP1PQPPP/R1B1KB1R b KQkq - 1 6" // leads to a thrid rook for black
 )
 
 func generateFEN(board *Board) string {
