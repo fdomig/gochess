@@ -63,6 +63,7 @@ func (g *Game) Run() {
 
 		} else if in == "do" || in == "d" {
 			g.board.MakeMove(Search(g.board))
+			fmt.Printf("%s\n", g.board.String())
 
 		} else if in == "eval" || in == "e" {
 			fmt.Printf("Score: %d\n", Evaluate(g.board))

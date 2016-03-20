@@ -465,10 +465,11 @@ func (g *Generator) findThreats(square Square, sideToMove int8, skipKing bool) [
 	for _, delta := range deltaAll {
 		depth := 0
 		for to := int8(square) + delta; g.board.legalSquare(to); to += delta {
+			depth++
 			content := g.board.data[to] * sideToMove
 
 			// if there is a pawn/king on next square, check for attack
-			if content == Pawn || content == King {
+			if content == -Pawn || content == -King {
 				if depth == 1 {
 					if g.attackPosible(to, opposite(delta)) {
 						threats = append(threats, to)
