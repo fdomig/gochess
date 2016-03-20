@@ -104,3 +104,10 @@ func formatNodesCount(nodes int64) string {
 	}
 	return fmt.Sprintf("%.2fM", float64(nodes)/1000000)
 }
+
+func abs(v int8) int8 {
+	if v >= 0 {
+		return v
+	}
+	return -v
+}

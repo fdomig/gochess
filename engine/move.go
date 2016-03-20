@@ -29,7 +29,6 @@ type Move struct {
 }
 
 func (m Move) String() string {
-	capture := ""
 
 	if m.Special == moveCastelingLong {
 		return "O-O-O"
@@ -38,11 +37,15 @@ func (m Move) String() string {
 		return "O-O"
 	}
 
+	str := SquareMap[m.From]
+
 	if m.Content != Empty {
-		capture = "x"
+		str += "x"
 	}
 
-	return fmt.Sprintf("%s%s%s", SquareMap[m.From], capture, SquareMap[m.To])
+	str += SquareMap[m.To]
+
+	return str
 }
 
 func createMove(str string) (Move, error) {

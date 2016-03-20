@@ -37,6 +37,8 @@ type Board struct {
 	whiteKingPosition Square
 	blackKingPosition Square
 	status            int
+	zobristTable      *ZobristTable
+	currentHash       int64
 }
 
 // NewBoard creates a new chessboard from given fen
@@ -46,6 +48,9 @@ func NewBoard(fen string) *Board {
 	if err != nil {
 		fmt.Printf("invalid FEN: \"%s\"\n", fen)
 	}
+
+	b.zobristTable = NewZobristTable()
+	b.currentHash = b.generateHash()
 
 	return b
 }
@@ -163,10 +168,12 @@ func (b *Board) MakeMove(m Move) {
 	}
 
 	b.sideToMove = opponent(b.sideToMove)
-
-	b.history = append(b.history, historyItem)
 	b.ply++
 
+	historyItem.hash = b.currentHash
+	b.history = append(b.history, historyItem)
+
+	b.updateHash(m)
 }
 
 // UndoMove undoes the last move on the board
@@ -186,6 +193,9 @@ func (b *Board) UndoMove() {
 	b.halfMoveClock = historyItem.halfMoveClock
 
 	m := historyItem.move
+
+	// XXX: might to be done at the end?
+	b.updateHash(m)
 
 	switch {
 	case m.Special == moveOrdinary || m.Special == movePromotion:
@@ -245,8 +255,73 @@ func (b *Board) isEmpty(squares ...Square) bool {
 
 func (b *Board) repetitions() int {
 	r := 0
-
+	first := len(b.history) - b.halfMoveClock
+	if first >= 0 {
+		for i := first; i < len(b.history)-1; i++ {
+			if b.history[i].hash == b.currentHash {
+				r++
+			}
+		}
+	}
 	return r
+}
+
+func (b *Board) updateHash(m Move) {
+	key := b.currentHash
+	color := 0
+	if b.sideToMove == Black {
+		color = 1
+	}
+	piece := abs(m.MovedPiece) - 1
+
+	key ^= b.zobristTable.hashPieces[piece][color][int8(m.From)]
+	key ^= b.zobristTable.hashPieces[piece][color][int8(m.To)]
+
+	if m.Content != Empty {
+		key ^= b.zobristTable.hashPieces[abs(m.Content)-1][color][int8(m.To)]
+	}
+
+	switch m.Special {
+	case moveCastelingLong:
+		if color == 0 {
+			key ^= b.zobristTable.hashCastelingWhite[castleLong]
+		} else {
+			key ^= b.zobristTable.hashCastelingBlack[castleLong]
+		}
+	case moveCastelingShort:
+		if color == 0 {
+			key ^= b.zobristTable.hashCastelingWhite[castleShort]
+		} else {
+			key ^= b.zobristTable.hashCastelingBlack[castleLong]
+		}
+	case moveEnPassant:
+		key ^= b.zobristTable.hashEnPassant[int8(m.To)-int8(m.MovedPiece)*nextRank]
+	case movePromotion:
+		key ^= b.zobristTable.hashPromotion[abs(m.Promoted)-1]
+	}
+
+	b.currentHash = key
+}
+
+func (b *Board) generateHash() int64 {
+	key := int64(0)
+
+	for square := int8(0); square < boardSize; square++ {
+		piece := b.data[square]
+		if piece > Empty {
+			key ^= b.zobristTable.hashPieces[piece-1][0][square]
+		} else if piece < Empty {
+			key ^= b.zobristTable.hashPieces[-piece-1][1][square]
+		}
+	}
+
+	key ^= b.zobristTable.hashCastelingWhite[b.whiteCastle]
+	key ^= b.zobristTable.hashCastelingBlack[b.blackCastle]
+	if b.sideToMove == Black {
+		key ^= b.zobristTable.hashSide
+	}
+
+	return key
 }
 
 func (b *Board) String() string {
