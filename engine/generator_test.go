@@ -27,7 +27,7 @@ func TestGenerateMovesForDefaultBoardPosition(t *testing.T) {
 		Move{From: G1, To: H3, MovedPiece: WhiteKnight, Special: moveOrdinary, Content: Empty, Promoted: Empty},
 	}
 
-	doTest(defaultFEN, expected, t)
+	doTestMovesForFEN(defaultFEN, expected, t)
 
 }
 
@@ -41,10 +41,40 @@ func TestGenerateMovesForCheckPositionToCreateAllEscapeMovesForKing(t *testing.T
 		Move{From: E6, To: F5, MovedPiece: BlackKing, Special: moveOrdinary, Content: Empty, Promoted: Empty},
 	}
 
-	doTest(fen, expected, t)
+	doTestMovesForFEN(fen, expected, t)
 }
 
-func doTest(fen string, expected []Move, t *testing.T) {
+func TestCheckSimpleShouldBeFalseForStartingPosition(t *testing.T) {
+	doTestCheckSimple(defaultFEN, false, t)
+}
+
+func TestCheckSimpleShouldBeFalseForNonCheckPosition(t *testing.T) {
+	doTestCheckSimple("rnbqkbnr/3p1ppp/p3p3/1pp3B1/3PP3/2N2N2/PPP2PPP/R2QKB1R b KQkq - 1 5", false, t)
+}
+
+func TestCheckSimpleShouldBeTrueForCheckPositionFromRook(t *testing.T) {
+	doTestCheckSimple("k7/8/8/8/8/8/8/RK6 b - - 0 2", true, t)
+}
+
+func TestAttackCheckSimpleForSingleRookOnFile(t *testing.T) {
+	doTestCheckSimple("r7/8/8/8/8/8/8/K7 w - - 0 1", true, t)
+}
+
+func TestAttackCheckSimpleForSingleRookOnRank(t *testing.T) {
+	doTestCheckSimple("r6K/8/8/8/8/8/8/8 w - - 0 1", true, t)
+}
+
+/* helper */
+
+func doTestCheckSimple(fen string, expected bool, t *testing.T) {
+	board, _ := parseFEN(fen)
+	if NewGenerator(board).CheckSimple() != expected {
+		t.Errorf("Expected CheckSimple() to be %t but was %t for board\n%s\n",
+			expected, !expected, board.String())
+	}
+}
+
+func doTestMovesForFEN(fen string, expected []Move, t *testing.T) {
 	board, _ := parseFEN(fen)
 	gen := NewGenerator(board)
 

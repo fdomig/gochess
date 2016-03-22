@@ -1,7 +1,5 @@
 package engine
 
-import "fmt"
-
 var (
 	nextRank int8 = 16
 	nextFile int8 = 1
@@ -132,9 +130,11 @@ func (g *Generator) GenerateMoves() []Move {
 // CheckSimple finds possible check attacks
 func (g *Generator) CheckSimple() bool {
 
+	g.reset()
+
 	// check for knight attacks first
 	for _, delta := range deltaKnight {
-		to := g.kingSquare + int8(delta)
+		to := g.kingSquare + delta
 		if g.board.legalSquare(to) && g.board.data[to]*opponent(g.board.sideToMove) == Knight {
 			return true
 		}
@@ -144,6 +144,7 @@ func (g *Generator) CheckSimple() bool {
 	for _, delta := range deltaAll {
 		depth := 0
 		for to := g.kingSquare + delta; g.board.legalSquare(to); to += delta {
+			depth++
 			found := g.board.data[to] * opponent(g.board.sideToMove)
 
 			// empty square, go ahead
@@ -153,7 +154,7 @@ func (g *Generator) CheckSimple() bool {
 
 			if found == Pawn || found == King {
 				if depth == 1 {
-					if g.attackPosible(to, opposite(delta)) {
+					if g.attackPossible(to, opposite(delta)) {
 						return true
 					}
 				}
@@ -166,7 +167,7 @@ func (g *Generator) CheckSimple() bool {
 			}
 
 			// found opponent
-			if g.attackPosible(to, delta) {
+			if g.attackPossible(to, delta) {
 				return true
 			}
 			break
@@ -232,11 +233,6 @@ func (g *Generator) sortMoves() {
 
 	// 5. normal moves
 	sorted = append(sorted, ordinary...)
-
-	if len(sorted) != len(g.moves) {
-		fmt.Printf("len(g.moves): %d, len(sorted): %d\n", len(g.moves), len(sorted))
-		panic("Sorted moves are missing moves!")
-	}
 
 	g.moves = sorted
 }
@@ -471,7 +467,7 @@ func (g *Generator) findThreats(square Square, sideToMove int8, skipKing bool) [
 			// if there is a pawn/king on next square, check for attack
 			if content == -Pawn || content == -King {
 				if depth == 1 {
-					if g.attackPosible(to, opposite(delta)) {
+					if g.attackPossible(to, opposite(delta)) {
 						threats = append(threats, to)
 					}
 				}
@@ -493,7 +489,7 @@ func (g *Generator) findThreats(square Square, sideToMove int8, skipKing bool) [
 			}
 
 			// found opponent piece
-			if g.attackPosible(to, delta) {
+			if g.attackPossible(to, delta) {
 				threats = append(threats, to)
 			}
 
@@ -545,7 +541,7 @@ func (g *Generator) numberOfCheckThreats() int {
 			// pawn on the next square, check if attack possible
 			if piece == Pawn || piece == King {
 				if depth == 1 {
-					if g.attackPosible(newSquare, opposite(delta)) {
+					if g.attackPossible(newSquare, opposite(delta)) {
 						g.kingUnderCheck = true
 						threats++
 						g.legalEnding[newSquare] = true
@@ -565,7 +561,7 @@ func (g *Generator) numberOfCheckThreats() int {
 			}
 
 			// we found an opponents piece; might be a threat for the current square
-			if g.attackPosible(newSquare, delta) {
+			if g.attackPossible(newSquare, delta) {
 				if squareOfGuardingPiece == Invalid {
 					threats++
 					g.kingUnderCheck = true
@@ -599,11 +595,8 @@ func (g *Generator) hasDirection(delta []int8, direction int8) bool {
 
 // check for attacks from a diven square in a particular direction
 // does not work for knight obviously
-func (g *Generator) attackPosible(from int8, direction int8) bool {
-	absPiece := g.board.data[from]
-	if absPiece < 0 {
-		absPiece = -absPiece
-	}
+func (g *Generator) attackPossible(from int8, direction int8) bool {
+	absPiece := abs(g.board.data[from])
 
 	switch absPiece {
 	case King:
