@@ -107,7 +107,7 @@ func (pv *pvSearch) alphaBeta(depth, alpha, beta int) int {
 	}
 
 	// repetition
-	if pv.board.ply > 0 && pv.board.repetitions() > 0 {
+	if pv.board.ply > 0 && pv.board.repetitions() >= 3 {
 		return scoreDraw
 	}
 
