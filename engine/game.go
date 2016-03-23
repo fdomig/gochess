@@ -53,7 +53,7 @@ func (g *Game) Run() {
 			g.board.UndoMove()
 
 		} else if strings.HasPrefix(in, "fen ") {
-			g.board = NewBoard(in[3:])
+			g.board = NewBoard(in[4:])
 
 		} else if in == "print" || in == "p" {
 			fmt.Printf("%s\n", g.board.String())
