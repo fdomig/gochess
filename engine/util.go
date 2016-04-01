@@ -131,23 +131,31 @@ func formatBoard(b *Board) string {
 		lastMoveSquare = b.history[len(b.history)-1].move.To
 	}
 
-	for rank := int8(7); rank >= 0; rank-- {
-		var s = fmt.Sprintf("%d  ", rank+1)
-		for file := int8(0); file < 8; file++ {
-			moved := " "
-			if square(rank, file) == int8(lastMoveSquare) {
-				moved = "*"
+	for r := int8(7); r >= 0; r-- {
+		var s = fmt.Sprintf("%d  ", r+1)
+		for f := int8(0); f < 8; f++ {
+			p := symbol(b.data[square(r, f)])
+
+			if p == "." && (r+f)&1 == 0 {
+				p = ","
 			}
-			s += fmt.Sprintf("%s%s ", symbol(b.data[square(rank, file)]), moved)
+
+			s += fmt.Sprintf("%s", p)
+
+			if square(r, f) == int8(lastMoveSquare) {
+				s += "* "
+			} else {
+				s += "  "
+			}
 		}
-		if rank == 4 {
+		if r == 4 {
 			color := "white"
 			if b.sideToMove == Black {
 				color = "black"
 			}
 			s += fmt.Sprintf("\t(%d) %s's move", b.fullMoves, color)
 		}
-		if rank == 3 {
+		if r == 3 {
 			c := ""
 			if b.whiteCastle&castleShort != 0 {
 				c += "K"
@@ -166,7 +174,7 @@ func formatBoard(b *Board) string {
 			}
 			s += fmt.Sprintf("\tCasteling: %s", c)
 		}
-		if rank == 2 {
+		if r == 2 {
 			gen := NewGenerator(b)
 			if gen.CheckSimple() {
 				s += fmt.Sprintf("\tCheck!")
