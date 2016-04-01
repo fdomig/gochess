@@ -36,10 +36,6 @@ new, n       start a new game
 
 moves, m     show a list of all possible moves
 
-perft        runs a performance test on the move generator (default starting position) 
-
-perft2       runs a performance test on the move generator ("position2" position)
-
 print, p     shows the current board position
 
 quit, q      quits this game and the application
