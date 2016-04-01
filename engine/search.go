@@ -1,9 +1,6 @@
 package engine
 
-import (
-	"fmt"
-	"time"
-)
+import "time"
 
 var (
 	searchVerbose = true
@@ -98,7 +95,6 @@ func (pv *pvSearch) alphaBeta(depth, alpha, beta int) int {
 
 	// TODO: index out of range
 	if len(pv.pathLength) <= pv.board.ply {
-		fmt.Printf("len(pv.PathLength): %d, pv.board.ply: %d\n", len(pv.pathLength), pv.board.ply)
 		return 0
 	}
 	pv.pathLength[pv.board.ply] = pv.board.ply
@@ -182,12 +178,6 @@ func (pv *pvSearch) quiescence(alpha, beta int) int {
 			pv.stopByTime = true
 			return 0
 		}
-	}
-
-	if pv.board.ply >= len(pv.pathLength) {
-		fmt.Printf("%s\n\nalpha: %d, beta: %d\n", pv.board.String(), alpha, beta)
-
-		return 0
 	}
 
 	pv.pathLength[pv.board.ply] = pv.board.ply

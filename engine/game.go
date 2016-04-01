@@ -56,14 +56,14 @@ func (g *Game) Run() {
 			g.board = NewBoard(in[4:])
 
 		} else if in == "print" || in == "p" {
-			fmt.Printf("%s\n", g.board.String())
+			fmt.Printf("%s\n", formatBoard(g.board))
 
 		} else if in == "search" || in == "s" {
 			Search(g.board)
 
 		} else if in == "do" || in == "d" {
 			g.board.MakeMove(Search(g.board))
-			fmt.Printf("%s\n", g.board.String())
+			fmt.Printf("%s\n", formatBoard(g.board))
 
 		} else if in == "eval" || in == "e" {
 			fmt.Printf("Score: %d\n", Evaluate(g.board))
@@ -71,7 +71,7 @@ func (g *Game) Run() {
 		} else if in == "auto" || in == "a" {
 			for g.board.status == statusNormal {
 				g.board.MakeMove(Search(g.board))
-				fmt.Printf("%s\n", g.board.String())
+				fmt.Printf("%s\n", formatBoard(g.board))
 			}
 
 		} else if m, err := createMove(in); err == nil {
