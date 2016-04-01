@@ -5,10 +5,14 @@ import (
 	"time"
 )
 
+var (
+	searchVerbose = true
+	searchMaxTime = 16 * time.Second
+)
+
 const (
 	searchMaxDepth  = 20
 	searchMaxPly    = 128
-	searchMaxTime   = 16 // seconds
 	searchEvalStart = 50000
 )
 
@@ -34,7 +38,7 @@ func Search(board *Board) Move {
 	startTime := time.Now()
 
 	pv := pvSearch{}
-	pv.stopTime = startTime.Add(searchMaxTime * time.Second)
+	pv.stopTime = startTime.Add(searchMaxTime)
 	pv.board = &Board{}
 	*pv.board = *board
 	pv.board.ply = 0

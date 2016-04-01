@@ -8,10 +8,18 @@ import (
 )
 
 func printSearchHead() {
+	if !searchVerbose {
+		return
+	}
+
 	fmt.Printf("ply  score   time   nodes  pv\n")
 }
 
 func printSearchLevel(pv *pvSearch, depth, score int, startTime time.Time) {
+	if !searchVerbose {
+		return
+	}
+
 	fmt.Printf("%3d %6s %6s %7s  ", depth,
 		formatScore(score), formatDuration(time.Since(startTime)), formatNodesCount(pv.checkedNodes))
 
@@ -35,6 +43,10 @@ func printSearchLevel(pv *pvSearch, depth, score int, startTime time.Time) {
 }
 
 func printSearchResult(pv *pvSearch, startTime time.Time) {
+	if !searchVerbose {
+		return
+	}
+
 	totalTime := time.Since(startTime) // time is in nanoseconds
 	fmt.Printf("%s nodes searched in %s secs (%.1fK nodes/sec)\n",
 		formatNodesCount(pv.checkedNodes), formatDuration(totalTime),
@@ -42,6 +54,9 @@ func printSearchResult(pv *pvSearch, startTime time.Time) {
 }
 
 func printPerftData(board *Board, expected []PerftData) {
+	if !searchVerbose {
+		return
+	}
 
 	fmt.Printf(color.WhiteString("D   Nodes    Capt.   E.p.   Cast.   Prom.  Checks   Mates   Time\n"))
 	for i := 0; i < len(expected); i++ {
@@ -70,6 +85,7 @@ func printPerftData(board *Board, expected []PerftData) {
 			formatPerftEntry(res.mates, expected[i].mates))
 
 	}
+
 }
 
 func formatPerftEntry(actual, expected int64) string {

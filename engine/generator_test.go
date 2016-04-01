@@ -32,7 +32,7 @@ func TestGenerateMovesForDefaultBoardPosition(t *testing.T) {
 }
 
 func TestGenerateMovesForCheckPositionToCreateAllEscapeMovesForKing(t *testing.T) {
-	fen := ("8/7p/1R2k1p1/3pp1P1/7P/7r/8/5K2 b - - 3 39")
+	fen := "8/7p/1R2k1p1/3pp1P1/7P/7r/8/5K2 b - - 3 39"
 
 	expected := []Move{
 		Move{From: E6, To: E7, MovedPiece: BlackKing, Special: moveOrdinary, Content: Empty, Promoted: Empty},
