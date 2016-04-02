@@ -4,6 +4,8 @@
 
 Well, this is a chess engine highly inspired by [chess-at-nite][chess-at-nite] which I have written several years ago with my friends in Copenhagen, Denmark. Since I am interested in writting an application in Golang I thought of doing chess.
 
+<img src="gochess.png" width="600" />
+
 ## Installation
 
 ```
