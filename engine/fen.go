@@ -9,17 +9,6 @@ import (
 
 const (
 	defaultFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
-	// defaultFEN = "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq -"
-
-	// defaultFEN = "k7/8/K7/8/7p/7P/8/8 w - - 0 1" // only kings
-	// defaultFEN = "8/7K/5k2/7P/8/8/8/8 w - - 7 15" // repetitions
-	// defaultFEN = "6k1/8/6KP/8/8/8/8/8 w - - 7 15" // repetitions
-
-	// defaultFEN = "r7/8/8/2k5/5K2/8/8/7R - - 49 1" // repetitions
-
-	// defaultFEN = "r1bqkb1r/ppp1pppp/1nnp4/4P3/2P5/2N2N2/PP1PQPPP/R1B1KB1R b KQkq - 1 6" // leads to a thrid rook for black
-	// defaultFEN = "rnbqkbnr/3p1ppp/p3p3/1pp3B1/3PP3/2N2N2/PPP2PPP/R2QKB1R b KQkq - 1 5" // thinks it's check but isn't
 )
 
 func generateFEN(board *Board) string {
