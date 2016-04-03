@@ -70,7 +70,7 @@ func doTestCheckSimple(fen string, expected bool, t *testing.T) {
 	board, _ := parseFEN(fen)
 	if NewGenerator(board).CheckSimple() != expected {
 		t.Errorf("Expected CheckSimple() to be %t but was %t for board\n%s\n",
-			expected, !expected, board.String())
+			expected, !expected, formatBoard(board))
 	}
 }
 

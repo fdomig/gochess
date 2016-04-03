@@ -31,6 +31,6 @@ func doTestBestMoveForFEN(fen string, e Move, t *testing.T) {
 	if a.From != e.From || a.To != e.To || a.MovedPiece != e.MovedPiece ||
 		a.Content != e.Content || a.Promoted != e.Promoted || a.Special != e.Special {
 
-		t.Errorf("Expected %s but found %s\n%s\n", e.String(), a.String(), b.String())
+		t.Errorf("Expected %s but found %s\n%s\n", e.String(), a.String(), formatBoard(b))
 	}
 }
